@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Deploy
 
 # Controls when the workflow will run
 on:
@@ -13,25 +13,14 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  deploy:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    name: A Laravel deploy action example
     steps:
-      - name: executing remote ssh commands using key
-        uses: appleboy/ssh-action@master
+      - name: test
+        uses: yankewei/laravel-deploy-action@v1.0.0
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          port: ${{ secrets.PORT }}
-          key: ${{ secrets.SSHKEY }}
-          script: |
-            cd /var/www/site
-            php artisan down
-            git pull
-            composer intall --no-dev
-            php artisan optimize
-            composer dumpautoload -o
-            php artisan up
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          app_env_data: ${{ secrets.APP_ENV_DATA }}

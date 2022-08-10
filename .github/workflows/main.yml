@@ -15,9 +15,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    name: A Laravel deploy action example
+    name: Deploy application
     steps:
-      - name: test
+      - name: deploy
         uses: yankewei/laravel-deploy-action@v1.0.0
         with:
           host: ${{ secrets.SSH_HOST }}

@@ -14,5 +14,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return "No worry, be haapy!";
+    return "No worry, be happy!";
 });
+

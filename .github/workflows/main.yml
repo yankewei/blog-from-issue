@@ -18,7 +18,7 @@ jobs:
     name: Deploy application
     steps:
       - name: deploy
-        uses: yankewei/laravel-deploy-action@v1.0.0
+        uses: yankewei/laravel-deploy-action@v1.0.1
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}

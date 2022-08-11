@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -18,13 +19,34 @@ class GithubController extends Controller
             throw new AccessDeniedHttpException('You request is timeout, please rend a request from Github.');
         }
 
+        $authentication = $this->getAuthenticationGivenCode($request->input('code'));
+
+        $response = $this->getUserGivenAccessToken($authentication['access_token']);
+    }
+
+    private function getAuthenticationGivenCode(string $code): array
+    {
         $response = Http::withHeaders(['Accept' => 'application/json'])->post('https://github.com/login/oauth/access_token', [
             'client_id' => config('services.github.client_id'),
             'client_secret' => config('services.github.client_secret'),
-            'code' => $request->input('code'),
+            'code' => $code,
             'redirect_uri' => config('services.github.redirect_uri')
         ]);
 
+        $response = json_decode($response->body(), true);
+
+        return Arr::only($response, ['access_token', 'expires_in', 'refresh_token', 'refresh_token_expires_in']);
+    }
+
+    /**
+     * @param array $access_token
+     * @return array // ['login' => "yankewei", "avatar_url" => "https://avatars.githubusercontent.com/u/19988359?v=4"]
+     */
+    private function getUserGivenAccessToken(array $access_token): array
+    {
+        $response = Http::withHeaders(['Authorization' => 'token ' . $access_token])->get('https://api.github.com/user');
+
+        return json_decode($response->body(), true);
     }
 
     public function oauth(Request $request)

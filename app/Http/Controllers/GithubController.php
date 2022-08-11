@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GithubUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
@@ -21,7 +22,16 @@ class GithubController extends Controller
 
         $authentication = $this->getAuthenticationGivenCode($request->input('code'));
 
-        $response = $this->getUserGivenAccessToken($authentication['access_token']);
+        $user_info = $this->getUserGivenAccessToken($authentication['access_token']);
+
+        GithubUser::create([
+            GithubUser::COLUMN_LOGIN => $user_info['login'],
+            GithubUser::COLUMN_USERNAME => $user_info['name'],
+            GithubUser::COLUMN_AVATAR_URL => $user_info['avatar_url'],
+            GithubUser::COLUMN_AUTHENTICATION => $authentication,
+        ]);
+
+        return redirect('/');
     }
 
     private function getAuthenticationGivenCode(string $code): array
@@ -39,10 +49,11 @@ class GithubController extends Controller
     }
 
     /**
-     * @param array $access_token
+     * @param string $access_token
+     *
      * @return array // ['login' => "yankewei", "avatar_url" => "https://avatars.githubusercontent.com/u/19988359?v=4"]
      */
-    private function getUserGivenAccessToken(array $access_token): array
+    private function getUserGivenAccessToken(string $access_token): array
     {
         $response = Http::withHeaders(['Authorization' => 'token ' . $access_token])->get('https://api.github.com/user');
 

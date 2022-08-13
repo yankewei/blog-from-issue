@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return "No worry, be happy!";
-});
-
+Route::get('/', \App\Http\Controllers\HomeController::class . '@home');
+Route::get('{login}/{repo}/issues', \App\Http\Controllers\IssueController::class . '@index');
+Route::get('{login}/{repo}/issues/{number}', \App\Http\Controllers\IssueController::class . '@show');

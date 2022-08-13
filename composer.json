@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.0.2",
         "doctrine/dbal": "^3.4",
+        "erusev/parsedown": "^1.7",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
@@ -15,6 +16,7 @@
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.12",
         "fakerphp/faker": "^1.9.1",
+        "friendsofphp/php-cs-fixer": "^3.9",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.4",
@@ -27,7 +29,10 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

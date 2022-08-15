@@ -12,12 +12,8 @@ return new class () extends Migration {
      */
     public function up()
     {
-        Schema::create('github_user', function (Blueprint $table) {
-            $table->tinyInteger('id')->autoIncrement();
-            $table->char('username', 50)->nullable(false);
-            $table->string('head_url', 100);
-            $table->json('authentication');
-            $table->timestamps();
+        Schema::table('github_user', function (Blueprint $table) {
+            $table->unique('login', 'unique_login');
         });
     }
 
@@ -28,6 +24,8 @@ return new class () extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('github_user');
+        Schema::table('github_user_login_column', function (Blueprint $table) {
+            $table->dropUnique('unique_login');
+        });
     }
 };

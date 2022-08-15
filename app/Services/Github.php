@@ -26,14 +26,28 @@ class Github
     }
 
     /**
-     * @return array{id:int,html_url:string,full_name:string,description:string,create_at:string,updated_at:string,pushed_at:string}
+     * @return array{login:string,avatar_url:string}
+     * @throws Exception
+     */
+    public function getUser(): array
+    {
+        $user = $this->call('users/' . $this->login, Request::METHOD_GET);
+
+        return [
+            'login'      => $user['login'],
+            'avatar_url' => $user['avatar_url'],
+        ];
+    }
+
+    /**
+     * @return array{id:int,html_url:string,name:string,full_name:string,description:string,create_at:string,updated_at:string,pushed_at:string}
      * @throws Exception
      */
     public function getUserRepos(): array
     {
         $repos = $this->call('user/repos', Request::METHOD_GET, ['sort' => 'created_at', 'direction' => 'desc']);
         return collect($repos)->map(function (array $repo) {
-            return Arr::only($repo, ['id', 'html_url', 'full_name', 'description', 'owner', 'created_at', 'updated_at', 'pushed_at']);
+            return Arr::only($repo, ['id', 'html_url', 'name','full_name', 'description', 'owner', 'created_at', 'updated_at', 'pushed_at']);
         })->toArray();
     }
 

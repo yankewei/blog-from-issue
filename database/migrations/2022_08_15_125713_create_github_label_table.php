@@ -12,9 +12,12 @@ return new class () extends Migration {
      */
     public function up()
     {
-        Schema::table('github_user', function (Blueprint $table) {
-            $table->char('login', 50)->nullable(false);
-            $table->renameColumn('head_url', 'avatar_url');
+        Schema::create('github_label', function (Blueprint $table) {
+            $table->smallInteger('id', true, true);
+            $table->char('name', 50)->nullable(false)->unique('unique_name');
+            $table->char('color', 6)->default('ffffff');
+            $table->string('description', 50);
+            $table->timestamps();
         });
     }
 
@@ -25,9 +28,6 @@ return new class () extends Migration {
      */
     public function down()
     {
-        Schema::table('github_user', function (Blueprint $table) {
-            $table->renameColumn('avatar_url', 'head_url');
-            $table->dropColumn('login');
-        });
+        Schema::dropIfExists('github_label');
     }
 };

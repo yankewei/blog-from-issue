@@ -12,7 +12,12 @@ return new class () extends Migration {
      */
     public function up()
     {
-        Schema::drop('github_user');
+        Schema::create('github_repo', function (Blueprint $table) {
+            $table->tinyInteger('id', true, true);
+            $table->char('full_name', 50)->nullable(false);
+            $table->string('description', 255);
+            $table->timestamps();
+        });
     }
 
     /**
@@ -22,12 +27,6 @@ return new class () extends Migration {
      */
     public function down()
     {
-        Schema::create('github_user', function (Blueprint $table) {
-            $table->tinyInteger('id')->autoIncrement();
-            $table->char('username', 50)->nullable(false);
-            $table->string('head_url', 100);
-            $table->json('authentication');
-            $table->timestamps();
-        });
+        Schema::dropIfExists('github_repo');
     }
 };

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class GithubUser extends Model
 {
-    protected $table = 'github_user';
+    protected $table = 'github_users';
 
     protected $fillable = [
         self::COLUMN_LOGIN,

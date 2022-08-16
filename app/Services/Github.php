@@ -53,7 +53,7 @@ class Github
 
     /**
      * @param string $repo
-     * @return array{id:int,html_url:string,title:string,labels:array{int,array{name:string}},create_at:string,updated_at:string}
+     * @return array{id:int,html_url:string,title:string,body:string,labels:array{int,array{name:string}},create_at:string,updated_at:string}
      * @throws Exception
      */
     public function getRepoIssues(string $repo): array
@@ -84,7 +84,7 @@ class Github
         }
 
         return $collection->map(function (array $issue) {
-            return Arr::only($issue, ['id', 'number', 'html_url', 'title', 'labels', 'created_at', 'updated_at']);
+            return Arr::only($issue, ['id', 'number', 'html_url', 'title', 'body', 'labels', 'created_at', 'updated_at']);
         })->toArray();
     }
 

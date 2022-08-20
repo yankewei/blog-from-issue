@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Facades\Github;
+use App\Models\GithubIssue;
 
 final class HomeController extends Controller
 {
     public function home()
     {
-        $repos = Github::getUserRepos();
+        $issues = GithubIssue::paginate(20);
 
-        return view('home', ['login' => Github::getLogin(), 'repos' => $repos]);
+        return view('home', ['login' => Github::getLogin(), 'issues' => $issues]);
     }
 }

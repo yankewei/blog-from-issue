@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array getUserRepos()
  * @method static array getRepoIssues(string $repo_name)
  * @method static array getIssue(string $repo, int $number)
+ * @method static array getIssueComments(string $repo, int $number)
  */
 class Github extends Facade
 {

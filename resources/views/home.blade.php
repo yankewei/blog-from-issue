@@ -9,11 +9,10 @@
 </head>
 <body>
     <ul>
-        @foreach ($repos as $repo)
-            <li>
-                <a href="/{{ $repo['full_name'] }}/issues">{{ $repo['full_name'] }}</a> : {{ $repo['description'] }}</li>
+        @foreach ($issues as $issue)
+            <li><a href="/issues/{{ $issue->id }}">{{ $issue->title }}</a></li>
         @endforeach
-
+        {{ $issues->links() }}
     </ul>
 </body>
 </html>

@@ -3,19 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Facades\Github;
+use App\Models\GithubIssue;
 
 class IssueController extends Controller
 {
-    public function index(string $login, string $repo)
+    public function show(string $id)
     {
-        $issues = Github::getRepoIssues($repo);
-
-        return view('issue.index', ['login' => $login, 'repo' => $repo, 'issues' => $issues]);
-    }
-
-    public function show(string $login, string $repo, int $number)
-    {
-        $issue = Github::getIssue($repo, $number);
+        $issue = GithubIssue::with(['labels', 'comments'])->findOrFail($id);
 
         return view('issue.show', ['issue' => $issue]);
     }

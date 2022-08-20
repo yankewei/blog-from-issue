@@ -14,5 +14,4 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', \App\Http\Controllers\HomeController::class . '@home');
-Route::get('{login}/{repo}/issues', \App\Http\Controllers\IssueController::class . '@index');
-Route::get('{login}/{repo}/issues/{number}', \App\Http\Controllers\IssueController::class . '@show');
+Route::get('issues/{id}', \App\Http\Controllers\IssueController::class . '@show');

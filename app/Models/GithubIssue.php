@@ -21,6 +21,13 @@ final class GithubIssue extends Model
     public const COLUMN_TITLE   = 'title';
     public const COLUMN_CONTENT = 'content';
 
+    public static function getGithubIssueGivenRepoIdAndNumber(int $repo_id, int $number): ?self
+    {
+        return self::where(self::COLUMN_REPO_ID, $repo_id)
+            ->where(self::COLUMN_NUMBER, $number)
+            ->first();
+    }
+
     public function repo()
     {
         return $this->belongsTo(GithubRepo::class, GithubRepo::COLUMN_ID, self::COLUMN_REPO_ID);

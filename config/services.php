@@ -34,5 +34,6 @@ return [
     'github' => [
         'login' => env('GITHUB_LOGIN'),
         'pat' => env('GITHUB_PAT'),
+        'webhook_secret' => env('GITHUB_WEBHOOK_SECRET')
     ]
 ];

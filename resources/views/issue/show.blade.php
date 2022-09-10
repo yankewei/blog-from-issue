@@ -23,7 +23,6 @@
                 @foreach($issue->labels as $label)
                     <span class="Label Label--primary ml-1">{{ $label->name }}</span>
                 @endforeach
-                <span class="Label Label--primary ml-1">Primary</span>
             </div>
         @endif
 

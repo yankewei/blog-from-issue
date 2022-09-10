@@ -29,6 +29,7 @@
 
         <div class="col-6 p-2 mx-auto">
             {!! parseMarkdown($issue->content) !!}
+            <hr/>
             @if($issue->comments->count() !== 0)
                 @foreach($issue->comments as $comment)
                     {!! parseMarkdown($comment->content) !!}
@@ -37,4 +38,20 @@
         </div>
     </div>
 </body>
+<script type="text/javascript">
+    let ul_elements = document.getElementsByTagName('ul');
+    for (let ul_element of ul_elements) {
+        ul_element.classList.add('pl-4');
+        ul_element.classList.add('pb-4');
+    }
+
+    ['language-php', 'language-go'].forEach( function (class_name) {
+        let code_elements = document.getElementsByClassName(class_name)
+        for (let code_element of code_elements) {
+            code_element.classList.add('border')
+            code_element.classList.add('color-border-done-emphasis')
+        }
+    });
+
+</script>
 </html>

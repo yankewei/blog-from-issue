@@ -1,13 +1,8 @@
 // app/page.tsx
-import {
-  Button,
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarItem,
-} from "@nextui-org/navbar";
+import { Navbar, NavbarContent, NavbarItem } from "@nextui-org/navbar";
 
-import NavLink from "./navLink";
+import NavLink from "@/ui/NavLink";
+import HomeList from "@/ui/home/List";
 
 export default function Page() {
   const navItems = [
@@ -34,12 +29,16 @@ export default function Page() {
   });
 
   return (
-    <Navbar>
-      <NavbarContent justify="start"></NavbarContent>
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        {navItems}
-      </NavbarContent>
-      <NavbarContent justify="end"></NavbarContent>
-    </Navbar>
+    <>
+      <Navbar>
+        <NavbarContent justify="start"></NavbarContent>
+        <NavbarContent className="hidden sm:flex gap-4" justify="center">
+          {navItems}
+        </NavbarContent>
+        <NavbarContent justify="end"></NavbarContent>
+      </Navbar>
+
+      <HomeList></HomeList>
+    </>
   );
 }

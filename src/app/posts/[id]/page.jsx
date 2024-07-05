@@ -24,10 +24,11 @@ export default function Page({ params }) {
                 <SyntaxHighlighter
                   {...rest}
                   PreTag="div"
-                  children={String(children).replace(/\n$/, "")}
                   language={match[1]}
                   style={dark}
-                />
+                >
+                  {String(children).replace(/\n$/, "")}
+                </SyntaxHighlighter>
               ) : (
                 <code {...rest} className={className}>
                   {children}

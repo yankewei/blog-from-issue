@@ -1,6 +1,6 @@
 "use client";
 
-import { Listbox, ListboxItem } from "@nextui-org/react";
+import { Listbox, ListboxItem, Link } from "@nextui-org/react";
 import { ListboxWrapper } from "@/ui/home/ListboxWrapper";
 import MyCard from "@/ui/home/Card";
 
@@ -17,9 +17,12 @@ export default function List() {
   ];
 
   const items = articles.map(function (article) {
+    const href = `posts/${article.id}`;
     return (
       <ListboxItem key={article.id}>
-        <MyCard title={article.title} />
+        <Link href={href}>
+          <MyCard title={article.title} />
+        </Link>
       </ListboxItem>
     );
   });

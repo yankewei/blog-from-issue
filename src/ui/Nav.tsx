@@ -1,6 +1,4 @@
-import { Navbar, NavbarContent, NavbarItem } from "@nextui-org/navbar";
-
-import NavLink from "@/ui/NavLink";
+import { Navbar, NavbarContent, NavbarItem, Link } from "@nextui-org/react";
 
 export default function Nav() {
   const navItems = [
@@ -16,10 +14,17 @@ export default function Nav() {
       active: false,
       href: "/about",
     },
-  ].map(function (navItem) {
+  ].map(function (item) {
     return (
-      <NavbarItem isActive={navItem.active} key={navItem.id}>
-        <NavLink item={navItem} />
+      <NavbarItem isActive={item.active} key={item.id}>
+        <Link
+          color={item.active ? undefined : "foreground"}
+          href={item.href}
+          aria-current={item.active ? "page" : undefined}
+          size="md"
+        >
+          {item.name}
+        </Link>
       </NavbarItem>
     );
   });

@@ -1,8 +1,7 @@
 "use client";
 
-import { Listbox, ListboxItem, Link } from "@nextui-org/react";
+import { Listbox, ListboxItem, Link, Card, CardBody } from "@nextui-org/react";
 import { ListboxWrapper } from "@/ui/home/ListboxWrapper";
-import MyCard from "@/ui/home/Card";
 
 export default function List() {
   const articles = [
@@ -16,12 +15,16 @@ export default function List() {
     },
   ];
 
-  const items = articles.map(function (article) {
+  const items = articles.map(function (article): React.ReactElement {
     const href = `posts/${article.id}`;
     return (
       <ListboxItem key={article.id}>
         <Link href={href}>
-          <MyCard title={article.title} />
+          <Card shadow="none">
+            <CardBody>
+              <p>{article.title}</p>
+            </CardBody>
+          </Card>
         </Link>
       </ListboxItem>
     );

@@ -1,6 +1,6 @@
 import { Inter } from "next/font/google";
-import "./globals.css";
-import { Providers } from "./providers";
+import "@/ui/globals.css";
+import { Providers } from "@/app/providers";
 import Nav from "@/ui/Nav";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -10,7 +10,11 @@ export const metadata = {
   description: "Write every thing",
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" className="light">
       <body className={inter.className}>

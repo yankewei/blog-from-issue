@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL")
+}
+
+model repository {
+  id        Int     @id
+  full_name String  @db.VarChar(50)
+  issues    Issue[]
+
+  @@map("repositories")
+}
+
+model Issue {
+  id           Int            @id @default(autoincrement()) @db.SmallInt()
+  number       Int            @db.SmallInt()
+  title        String         @db.VarChar(255)
+  body         String?
+  created_at   DateTime
+  updated_at   DateTime?
+  deleted_at   DateTime?
+  repository   repository     @relation(fields: [repositoryId], references: [id])
+  repositoryId Int
+  IssueOnLabel IssueOnLabel[]
+
+  @@map("issues")
+}
+
+model Label {
+  id           Int            @id @default(autoincrement()) @db.SmallInt()
+  name         String         @db.Char(10)
+  description  String?        @db.VarChar(255)
+  color        String         @db.Char(6)
+  IssueOnLabel IssueOnLabel[]
+
+  @@map("labels")
+}
+
+model IssueOnLabel {
+  Issue   Issue @relation(fields: [issueId], references: [id])
+  issueId Int   @db.SmallInt()
+  Label   Label @relation(fields: [labelId], references: [id])
+  labelId Int   @db.SmallInt()
+
+  @@id([issueId, labelId])
+  @@map("issue_on_lables")
+}

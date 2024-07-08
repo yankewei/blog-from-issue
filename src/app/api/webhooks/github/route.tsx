@@ -1,6 +1,13 @@
+import { NextRequest } from "next/server";
+import { PrismaClient } from "@prisma/client";
+
 let encoder = new TextEncoder();
 
-async function verifySignature(secret, signature, payload) {
+async function verifySignature(
+  secret: string,
+  signature: string,
+  payload: string,
+): Promise<boolean> {
   let parts = signature.split("=");
   let sigHex = parts[1];
 
@@ -28,7 +35,7 @@ async function verifySignature(secret, signature, payload) {
   return equal;
 }
 
-function hexToBytes(hex) {
+function hexToBytes(hex: string): Uint8Array {
   let len = hex.length / 2;
   let bytes = new Uint8Array(len);
 
@@ -43,17 +50,16 @@ function hexToBytes(hex) {
   return bytes;
 }
 
-export async function POST(request) {
+export async function POST(request: NextRequest) {
   try {
     const payload = await request.json();
+    const verified = await verifySignature(
+      process.env.GITHUB_WEBHOOK_SECRET,
+      request.headers.get("X-Hub-Signature-256"),
+      payload,
+    );
 
-    if (
-      !verifySignature(
-        process.env.GITHUB_WEBHOOK_SECRET,
-        request.headers.get("X-Hub-Signature-256"),
-        payload,
-      )
-    ) {
+    if (!verified) {
       return new Response("Invalid request!", {
         status: 400,
       });
@@ -76,4 +82,8 @@ export async function POST(request) {
   });
 }
 
-function handleIssueOpen(request) {}
+async function handleIssueOpen(request: NextRequest) {
+  const payload = await request.json();
+  const repository = payload["repository"];
+  const issue = payload["issue"];
+}

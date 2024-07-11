@@ -15,7 +15,7 @@ datasource db {
 
 model repository {
   id        Int     @id
-  full_name String  @db.VarChar(50)
+  full_name String  @unique @db.VarChar(50)
   issues    Issue[]
 
   @@map("repositories")

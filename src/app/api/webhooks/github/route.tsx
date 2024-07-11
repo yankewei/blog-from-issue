@@ -3,6 +3,8 @@ import { PrismaClient } from "@prisma/client";
 
 let encoder = new TextEncoder();
 
+const prisma = new PrismaClient();
+
 async function verifySignature(
   secret: string,
   signature: string,
@@ -67,10 +69,10 @@ export async function POST(request: NextRequest) {
 
     const github_event = request.headers.get("X-GitHub-Event");
     const event_action = payload["action"];
+
     if (github_event === "issues" && event_action === "opened") {
-      handleIssueOpen(request);
+      handleIssueOpen(payload);
     }
-    console.log(github_event, event_action);
   } catch (error) {
     return new Response(`Webhook error: ${error.message}`, {
       status: 400,
@@ -82,8 +84,19 @@ export async function POST(request: NextRequest) {
   });
 }
 
-async function handleIssueOpen(request: NextRequest) {
-  const payload = await request.json();
-  const repository = payload["repository"];
-  const issue = payload["issue"];
+async function handleIssueOpen(payload: object) {
+  const repository_raw_data = payload["repository"];
+  const issue_raw_data = payload["issue"];
+
+  const repository = await prisma.repository.findUnique({
+    where: {
+      full_name: repository_raw_data["full_name"],
+    },
+    select: {
+      id: true,
+      full_name: true,
+    },
+  });
+
+  console.log(repository);
 }

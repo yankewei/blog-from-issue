@@ -14,7 +14,7 @@ datasource db {
 }
 
 model repository {
-  id        Int     @id
+  id        Int     @id @default(autoincrement()) @db.SmallInt()
   full_name String  @unique @db.VarChar(50)
   issues    Issue[]
 

@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "repositories" (
-    "id" INTEGER NOT NULL,
+    "id" SMALLSERIAL NOT NULL,
     "full_name" VARCHAR(50) NOT NULL,
 
     CONSTRAINT "repositories_pkey" PRIMARY KEY ("id")
@@ -37,6 +37,9 @@ CREATE TABLE "issue_on_lables" (
 
     CONSTRAINT "issue_on_lables_pkey" PRIMARY KEY ("issueId","labelId")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "repositories_full_name_key" ON "repositories"("full_name");
 
 -- AddForeignKey
 ALTER TABLE "issues" ADD CONSTRAINT "issues_repositoryId_fkey" FOREIGN KEY ("repositoryId") REFERENCES "repositories"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

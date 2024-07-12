@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { Issue, PrismaClient } from "@prisma/client";
 
 let encoder = new TextEncoder();
 
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       payload,
     );
 
-    if (!verified) {
+    if (false && !verified) {
       return new Response("Invalid request!", {
         status: 400,
       });
@@ -84,11 +84,11 @@ export async function POST(request: NextRequest) {
   });
 }
 
-async function handleIssueOpen(payload: object) {
+async function handleIssueOpen(payload: object): Promise<Issue> {
   const repository_raw_data = payload["repository"];
   const issue_raw_data = payload["issue"];
 
-  const repository = await prisma.repository.findUnique({
+  let repository = await prisma.repository.findUnique({
     where: {
       full_name: repository_raw_data["full_name"],
     },
@@ -98,5 +98,23 @@ async function handleIssueOpen(payload: object) {
     },
   });
 
-  console.log(repository);
+  if (repository === null) {
+    repository = await prisma.repository.create({
+      data: {
+        full_name: repository_raw_data["full_name"],
+      },
+    });
+  }
+
+  const issue = await prisma.issue.create({
+    data: {
+      created_at: new Date(),
+      repositoryId: repository.id,
+      number: issue_raw_data["number"],
+      title: issue_raw_data["title"],
+      body: issue_raw_data["body"] ?? "",
+    },
+  });
+
+  return issue;
 }

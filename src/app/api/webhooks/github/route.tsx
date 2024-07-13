@@ -1,56 +1,6 @@
 import { NextRequest } from "next/server";
-import { Issue, PrismaClient } from "@prisma/client";
-
-let encoder = new TextEncoder();
-
-const prisma = new PrismaClient();
-
-async function verifySignature(
-  secret: string,
-  signature: string,
-  payload: string,
-): Promise<boolean> {
-  let parts = signature.split("=");
-  let sigHex = parts[1];
-
-  let algorithm = { name: "HMAC", hash: { name: "SHA-256" } };
-  let keyBytes = encoder.encode(secret);
-
-  let extractable = false;
-  let key = await crypto.subtle.importKey(
-    "raw",
-    keyBytes,
-    algorithm,
-    extractable,
-    ["sign", "verify"],
-  );
-
-  let sigBytes = hexToBytes(sigHex);
-  let dataBytes = encoder.encode(payload);
-  let equal = await crypto.subtle.verify(
-    algorithm.name,
-    key,
-    sigBytes,
-    dataBytes,
-  );
-
-  return equal;
-}
-
-function hexToBytes(hex: string): Uint8Array {
-  let len = hex.length / 2;
-  let bytes = new Uint8Array(len);
-
-  let index = 0;
-  for (let i = 0; i < hex.length; i += 2) {
-    let c = hex.slice(i, i + 2);
-    let b = parseInt(c, 16);
-    bytes[index] = b;
-    index += 1;
-  }
-
-  return bytes;
-}
+import { handleIssueOpen } from "./handleIssueOpen";
+import { verifySignature } from "./verifySignature";
 
 export async function POST(request: NextRequest) {
   try {
@@ -82,39 +32,4 @@ export async function POST(request: NextRequest) {
   return new Response("Success!", {
     status: 200,
   });
-}
-
-async function handleIssueOpen(payload: object): Promise<Issue> {
-  const repository_raw_data = payload["repository"];
-  const issue_raw_data = payload["issue"];
-
-  let repository = await prisma.repository.findUnique({
-    where: {
-      full_name: repository_raw_data["full_name"],
-    },
-    select: {
-      id: true,
-      full_name: true,
-    },
-  });
-
-  if (repository === null) {
-    repository = await prisma.repository.create({
-      data: {
-        full_name: repository_raw_data["full_name"],
-      },
-    });
-  }
-
-  const issue = await prisma.issue.create({
-    data: {
-      created_at: new Date(),
-      repositoryId: repository.id,
-      number: issue_raw_data["number"],
-      title: issue_raw_data["title"],
-      body: issue_raw_data["body"] ?? "",
-    },
-  });
-
-  return issue;
 }

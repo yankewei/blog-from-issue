@@ -1,8 +1,12 @@
 import { Marked } from "marked";
 import { markedHighlight } from "marked-highlight";
 import hljs from "highlight.js";
+import { Issue, PrismaClient } from "@prisma/client";
 
-export default function Page({ params }) {
+export default async function Page({ params }: { params: { id: string } }) {
+  const issue = await getIssue(parseInt(params.id));
+  console.log(issue);
+
   const marked = new Marked(
     markedHighlight({
       langPrefix: "hljs language-",
@@ -13,16 +17,7 @@ export default function Page({ params }) {
     }),
   );
 
-  const post = `Here is some JavaScript code:
-
-  ~~~go
-  func go() {
-
-  }
-  ~~~
-  `;
-
-  const html_content = marked.parse(post);
+  const html_content = marked.parse(issue.body);
 
   return (
     <div className="w-full flex justify-between">
@@ -34,4 +29,14 @@ export default function Page({ params }) {
       <div className="w-32"></div>
     </div>
   );
+}
+
+function getIssue(id: Number): Promise<Issue> {
+  const prisma = new PrismaClient();
+
+  return prisma.issue.findUnique({
+    where: {
+      id: id,
+    },
+  });
 }

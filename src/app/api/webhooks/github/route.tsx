@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 import { handleIssueOpen } from "./handleIssueOpen";
 import { verifySignature } from "./verifySignature";
 

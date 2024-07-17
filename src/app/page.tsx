@@ -1,5 +1,5 @@
 import HomeList from "@/ui/home/List";
-import { Prisma, Issue, PrismaClient } from "@prisma/client";
+import { Issue, PrismaClient } from "@prisma/client";
 
 export default async function Page({
   searchParams,

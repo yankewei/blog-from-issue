@@ -31,7 +31,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   );
 }
 
-function getIssue(id: Number): Promise<Issue> {
+function getIssue(id: number): Promise<Issue> {
   const prisma = new PrismaClient();
 
   return prisma.issue.findUnique({

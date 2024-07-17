@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     const signature = request.headers.get("X-Hub-Signature-256");
 
     const webhooks = new Webhooks({
-      secret: process.env.WEBHOOK_SECRET,
+      secret: process.env.GITHUB_WEBHOOK_SECRET,
     });
 
     const verified = await webhooks.verify(JSON.stringify(payload), signature);

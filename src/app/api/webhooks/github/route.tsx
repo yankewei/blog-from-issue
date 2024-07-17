@@ -1,15 +1,17 @@
 import type { NextRequest } from "next/server";
 import { handleIssueOpen } from "./handleIssueOpen";
-import { verifySignature } from "./verifySignature";
+import { Webhooks } from "@octokit/webhooks";
 
 export async function POST(request: NextRequest) {
   try {
     const payload = await request.json();
-    const verified = await verifySignature(
-      process.env.GITHUB_WEBHOOK_SECRET,
-      request.headers.get("X-Hub-Signature-256"),
-      payload,
-    );
+    const signature = request.headers.get("X-Hub-Signature-256");
+
+    const webhooks = new Webhooks({
+      secret: process.env.WEBHOOK_SECRET,
+    });
+
+    const verified = await webhooks.verify(JSON.stringify(payload), signature);
 
     if (!verified) {
       return new Response("Invalid request!", {

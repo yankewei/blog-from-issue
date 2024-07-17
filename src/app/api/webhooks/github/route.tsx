@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
       payload,
     );
 
-    if (false && !verified) {
+    if (!verified) {
       return new Response("Invalid request!", {
         status: 400,
       });

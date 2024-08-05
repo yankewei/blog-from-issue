@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     const event_action = payload["action"];
 
     if (github_event === "issues" && event_action === "opened") {
-      handleIssueOpen(payload);
+      await handleIssueOpen(payload);
     }
   } catch (error) {
     return new Response(`Webhook error: ${error.message}`, {

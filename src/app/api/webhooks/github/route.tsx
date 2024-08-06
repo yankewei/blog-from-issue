@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
-import { handleIssueOpen } from "./handleIssueOpen";
+import { handleIssueOpen } from "./issues/handleIssueOpen";
 import { Webhooks } from "@octokit/webhooks";
+import handleLabelCreated from "./labels/handleLabelCreated";
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,8 +23,21 @@ export async function POST(request: NextRequest) {
     const github_event = request.headers.get("X-GitHub-Event");
     const event_action = payload["action"];
 
-    if (github_event === "issues" && event_action === "opened") {
-      await handleIssueOpen(payload);
+    switch (github_event) {
+      case "issues":
+        switch (event_action) {
+          case "opened":
+            await handleIssueOpen(payload);
+            break;
+          default:
+            throw new Error(`Unsupport issue event ${event_action}`);
+        }
+        break;
+      case "label":
+        switch (event_action) {
+          case "created":
+            await handleLabelCreated(payload);
+        }
     }
   } catch (error) {
     return new Response(`Webhook error: ${error.message}`, {

@@ -1,6 +1,6 @@
 import { Issue, PrismaClient } from "@prisma/client";
 
-export async function handleIssueOpen(payload: object): Promise<Issue> {
+export function handleIssueOpen(payload: object): Promise<Issue> {
   const prisma = new PrismaClient();
 
   const repository_raw = payload["repository"];
@@ -22,7 +22,7 @@ export async function handleIssueOpen(payload: object): Promise<Issue> {
     );
   }
 
-  const issue = await prisma.issue.create({
+  return prisma.issue.create({
     data: {
       created_at: new Date(),
       repository: {
@@ -39,6 +39,4 @@ export async function handleIssueOpen(payload: object): Promise<Issue> {
       },
     },
   });
-
-  return issue;
 }

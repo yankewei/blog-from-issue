@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { handleIssueOpen } from "./issues/handleIssueOpen";
+import { handleIssueOpen, handleIssueLabeled } from "./issues/handleIssueEvent";
 import { Webhooks } from "@octokit/webhooks";
 import {
   handleLabelCreated,
@@ -31,6 +31,9 @@ export async function POST(request: NextRequest) {
         switch (event_action) {
           case "opened":
             await handleIssueOpen(payload);
+            break;
+          case "labeled":
+            await handleIssueLabeled(payload);
             break;
           default:
             throw new Error(`Unsupport issue event ${event_action}`);

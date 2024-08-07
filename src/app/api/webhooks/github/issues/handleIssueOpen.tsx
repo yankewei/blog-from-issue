@@ -1,6 +1,6 @@
 import { Issue, PrismaClient } from "@prisma/client";
 
-export function handleIssueOpen(payload: object): Promise<Issue> {
+export function handleIssueOpen(payload: JSON): Promise<Issue> {
   const prisma = new PrismaClient();
 
   const repository_raw = payload["repository"];

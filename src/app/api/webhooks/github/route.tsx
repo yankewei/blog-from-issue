@@ -1,7 +1,10 @@
 import type { NextRequest } from "next/server";
 import { handleIssueOpen } from "./issues/handleIssueOpen";
 import { Webhooks } from "@octokit/webhooks";
-import handleLabelCreated from "./labels/handleLabelCreated";
+import {
+  handleLabelCreated,
+  handleLabelEdited,
+} from "./labels/handleLabelEvent";
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,7 +24,7 @@ export async function POST(request: NextRequest) {
     }
 
     const github_event = request.headers.get("X-GitHub-Event");
-    const event_action = payload["action"];
+    const event_action = payload.action;
 
     switch (github_event) {
       case "issues":
@@ -37,6 +40,12 @@ export async function POST(request: NextRequest) {
         switch (event_action) {
           case "created":
             await handleLabelCreated(payload);
+            break;
+          case "edited":
+            await handleLabelEdited(payload);
+            break;
+          default:
+            throw new Error(`Unsupport label event ${event_action}`);
         }
     }
   } catch (error) {

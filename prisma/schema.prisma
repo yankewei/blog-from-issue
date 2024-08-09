@@ -44,6 +44,7 @@ model Label {
   color        String         @db.Char(6)
   IssueOnLabel IssueOnLabel[]
 
+  @@unique([name])
   @@map("labels")
 }
 

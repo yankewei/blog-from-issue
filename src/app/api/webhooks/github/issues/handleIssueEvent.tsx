@@ -1,4 +1,4 @@
-import { Issue, IssueOnLabel, Label, PrismaClient } from "@prisma/client";
+import { Issue, IssueOnLabel, Label, PrismaClient, Prisma } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -47,8 +47,10 @@ async function handleIssueLabeled(payload: {
   repository: { full_name: string };
 }): Promise<Label | IssueOnLabel> {
   const [repository, label] = await Promise.all([
-    prisma.repository.findUnique({ where: { full_name: payload.repository.full_name } }),
-    prisma.label.findFirst({ where: { name: payload.label.name } })
+    prisma.repository.findUnique({
+      where: { full_name: payload.repository.full_name },
+    }),
+    prisma.label.findFirst({ where: { name: payload.label.name } }),
   ]);
 
   const issue = await prisma.issue.findUnique({
@@ -81,4 +83,86 @@ async function handleIssueLabeled(payload: {
   });
 }
 
-export { handleIssueOpen, handleIssueLabeled };
+function handleIssueDeleted(payload: {
+  issue: { number: number };
+  repository: { full_name: string };
+}): Promise<Issue> {
+  return prisma.repository.findUnique({
+    where: { full_name: payload.repository.full_name },
+  }).then((repository) => {
+    return prisma.issueOnLabel.deleteMany({
+      where: {
+        Issue: {
+          repositoryId: repository.id,
+          number: payload.issue.number,
+        },
+      },
+    }).then((): Promise<Issue> => {
+      return prisma.issue.delete({
+        where: {
+          repositoryId_number: {
+            repositoryId: repository.id,
+            number: payload.issue.number,
+          },
+        },
+      });
+    });
+  });
+}
+
+function handleIssueUnlabeled(payload: {
+  issue: { number: number };
+  label: { name: string };
+  repository: { full_name: string };
+}): Promise<Prisma.BatchPayload> {
+  return prisma.repository.findUnique({
+    where: { full_name: payload.repository.full_name },
+  }).then((repository): Promise<Prisma.BatchPayload>  => {
+    return prisma.issueOnLabel.deleteMany({
+      where: {
+        Issue: {
+          repositoryId: repository.id,
+          number: payload.issue.number,
+        },
+        AND: {
+          Label: {
+            name: payload.label.name,
+          },
+        },
+      },
+    });
+  });
+}
+
+function handleIssueEdited(payload: {
+  changes: {
+    title?: { from: string };
+    body?: { from: string };
+  };
+  issue: { number: number, title: string, body: string };
+  repository: { full_name: string };
+}): Promise<Issue> {
+  const updating_data = {};
+
+  for (const [key, value] of Object.entries(payload.changes)) {
+    updating_data[key] = value.from;
+  }
+
+  return prisma.issue.findFirst({
+    where: {
+      repository:{
+        full_name: payload.repository.full_name,
+      },
+      AND: {
+        number: payload.issue.number,
+      }
+    },
+  }).then((issue): Promise<Issue> => {
+    return prisma.issue.update({
+      where: { id: issue.id },
+      data: updating_data,
+    });
+  });
+}
+
+export { handleIssueOpen, handleIssueLabeled, handleIssueDeleted, handleIssueUnlabeled, handleIssueEdited };

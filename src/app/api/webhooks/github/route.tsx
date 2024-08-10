@@ -1,9 +1,10 @@
 import type { NextRequest } from "next/server";
-import { handleIssueOpen, handleIssueLabeled } from "./issues/handleIssueEvent";
+import { handleIssueOpen, handleIssueLabeled, handleIssueDeleted, handleIssueUnlabeled } from "./issues/handleIssueEvent";
 import { Webhooks } from "@octokit/webhooks";
 import {
   handleLabelCreated,
   handleLabelEdited,
+  handleLabelDeleted,
 } from "./labels/handleLabelEvent";
 
 export async function POST(request: NextRequest) {
@@ -35,6 +36,12 @@ export async function POST(request: NextRequest) {
           case "labeled":
             await handleIssueLabeled(payload);
             break;
+          case "deleted":
+            await handleIssueDeleted(payload);
+            break;
+          case "unlabeled":
+            await handleIssueUnlabeled(payload);
+            break;
           default:
             throw new Error(`Unsupport issue event ${event_action}`);
         }
@@ -46,6 +53,9 @@ export async function POST(request: NextRequest) {
             break;
           case "edited":
             await handleLabelEdited(payload);
+            break;
+          case "deleted":
+            await handleLabelDeleted(payload);
             break;
           default:
             throw new Error(`Unsupport label event ${event_action}`);

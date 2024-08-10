@@ -16,7 +16,7 @@ function handleLabelCreated(payload: {
   });
 }
 
-async function handleLabelEdited(payload: {
+function handleLabelEdited(payload: {
   changes: {
     name?: { from: string };
     description?: { from: string };
@@ -32,19 +32,33 @@ async function handleLabelEdited(payload: {
   let before_label = null;
 
   if ("name" in payload.changes) {
-    before_label = await prisma.label.findFirst({
+    before_label = prisma.label.findFirst({
       where: { name: payload.changes.name.from },
     });
   } else {
-    before_label = await prisma.label.findFirst({
+    before_label = prisma.label.findFirst({
       where: { name: payload.label.name },
     });
   }
 
-  return prisma.label.update({
-    data: updating,
-    where: { id: before_label.id },
+  return before_label.then((label: Label) => {
+    return prisma.label.update({
+      data: updating,
+      where: { id: label.id },
+    });
+  })
+}
+
+function handleLabelDeleted(payload: {
+  label: { name: string };
+}): Promise<Label> {
+  return prisma.issueOnLabel.deleteMany({
+    where: { Label: { name: payload.label.name } },
+  }).then((): Promise<Label> => {
+    return prisma.label.delete({
+      where: { name: payload.label.name },
+    });
   });
 }
 
-export { handleLabelCreated, handleLabelEdited };
+export { handleLabelCreated, handleLabelEdited, handleLabelDeleted };

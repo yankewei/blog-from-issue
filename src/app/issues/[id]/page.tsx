@@ -1,30 +1,32 @@
-import { Marked } from "marked";
-import { markedHighlight } from "marked-highlight";
-import hljs from "highlight.js";
 import { Issue, PrismaClient } from "@prisma/client";
+import MarkdownIt from "markdown-it";
+import hljs from "highlight.js";
 
 export default async function Page({ params }: { params: { id: string } }) {
   const issue = await getIssue(parseInt(params.id));
-  console.log(issue);
 
-  const marked = new Marked(
-    markedHighlight({
-      langPrefix: "hljs language-",
-      highlight(code, lang, info) {
-        const language = hljs.getLanguage(lang) ? lang : "plaintext";
-        return hljs.highlight(code, { language }).value;
-      },
-    }),
-  );
+  const md = new MarkdownIt("commonmark", {
+    highlight: function (str, lang) {
+      if (lang && hljs.getLanguage(lang)) {
+        try {
+          return '<pre><code class="hljs border-solid border-1 border-gray-300 rounded my-3">' +
+                 hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+                 '</code></pre>';
+        } catch (__) {}
+      }
+  
+      return '<pre><code class="hljs border-solid border-1 border-gray-300 rounded my-3">' + md.utils.escapeHtml(str) + '</code></pre>';
+    }
+  });
 
-  const html_content = marked.parse(issue.body);
+  const result = md.render(issue.body);
 
   return (
     <div className="w-full flex justify-between">
       <div className="w-32"></div>
       <div
         className="w-full"
-        dangerouslySetInnerHTML={{ __html: html_content }}
+        dangerouslySetInnerHTML={{ __html: result }}
       ></div>
       <div className="w-32"></div>
     </div>

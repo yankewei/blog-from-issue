@@ -1,5 +1,5 @@
 import HomeList from "@/ui/home/List";
-import { Issue, PrismaClient } from "@prisma/client";
+import { Issue, Prisma, PrismaClient } from "@prisma/client";
 
 export default async function Page({
   searchParams,
@@ -16,6 +16,7 @@ async function getIssues(page: number): Promise<Issue[]> {
   const prisma = new PrismaClient();
 
   return await prisma.issue.findMany({
+    orderBy: { created_at: Prisma.SortOrder.desc },
     skip: (page - 1) * limit,
     take: limit,
   });

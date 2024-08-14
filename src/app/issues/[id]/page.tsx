@@ -9,14 +9,21 @@ export default async function Page({ params }: { params: { id: string } }) {
     highlight: function (str, lang) {
       if (lang && hljs.getLanguage(lang)) {
         try {
-          return '<pre><code class="hljs border-solid border-1 border-gray-300 rounded my-3">' +
-                 hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
-                 '</code></pre>';
+          return (
+            '<pre><code class="hljs bg-slate-100 border-solid border-1 border-gray-300 rounded my-3">' +
+            hljs.highlight(str, { language: lang, ignoreIllegals: true })
+              .value +
+            "</code></pre>"
+          );
         } catch (__) {}
       }
-  
-      return '<pre><code class="hljs border-solid border-1 border-gray-300 rounded my-3">' + md.utils.escapeHtml(str) + '</code></pre>';
-    }
+
+      return (
+        '<pre><code class="hljs bg-slate-100 border-solid border-1 border-gray-300 rounded my-3">' +
+        md.utils.escapeHtml(str) +
+        "</code></pre>"
+      );
+    },
   });
 
   const result = md.render(issue.body);

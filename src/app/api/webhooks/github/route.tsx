@@ -50,6 +50,8 @@ export async function POST(request: NextRequest) {
           case "unlabeled":
             await handleIssueUnlabeled(payload);
             break;
+          case "edited":
+            await handleLabelEdited(payload);
           default:
             throw new Error(`Unsupport issue event ${event_action}`);
         }

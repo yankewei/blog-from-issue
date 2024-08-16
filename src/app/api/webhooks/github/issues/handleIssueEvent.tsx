@@ -127,7 +127,7 @@ function handleIssueUnlabeled(payload: {
     });
 }
 
-function handleIssueEdited(payload: {
+async function handleIssueEdited(payload: {
   changes: {
     title?: { from: string };
     body?: { from: string };

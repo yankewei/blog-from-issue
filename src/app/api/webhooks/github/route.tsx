@@ -1,5 +1,10 @@
 import type { NextRequest } from "next/server";
-import { handleIssueOpen, handleIssueLabeled, handleIssueDeleted, handleIssueUnlabeled } from "./issues/handleIssueEvent";
+import {
+  handleIssueOpen,
+  handleIssueLabeled,
+  handleIssueDeleted,
+  handleIssueUnlabeled,
+} from "./issues/handleIssueEvent";
 import { Webhooks } from "@octokit/webhooks";
 import {
   handleLabelCreated,
@@ -10,18 +15,21 @@ import {
 export async function POST(request: NextRequest) {
   try {
     const payload = await request.json();
-    const signature = request.headers.get("X-Hub-Signature-256");
 
-    const webhooks = new Webhooks({
-      secret: process.env.GITHUB_WEBHOOK_SECRET,
-    });
+    if (
+      !(
+        request.headers.has("SKIP_WEBHOOK_VERIFY_CODE") &&
+        request.headers.get("SKIP_WEBHOOK_VERIFY_CODE") ===
+          process.env.SKIP_WEBHOOK_VERIFY_CODE
+      )
+    ) {
+      const signature = request.headers.get("X-Hub-Signature-256");
 
-    const verified = await webhooks.verify(JSON.stringify(payload), signature);
-
-    if (!verified) {
-      return new Response("Invalid request!", {
-        status: 400,
-      });
+      if (!(await verifyWebookRequest(payload, signature))) {
+        return new Response("Invalid request!", {
+          status: 400,
+        });
+      }
     }
 
     const github_event = request.headers.get("X-GitHub-Event");
@@ -70,4 +78,15 @@ export async function POST(request: NextRequest) {
   return new Response("Success!", {
     status: 200,
   });
+}
+
+async function verifyWebookRequest(
+  payload: object,
+  signature: string,
+): Promise<boolean> {
+  const webhooks = new Webhooks({
+    secret: process.env.GITHUB_WEBHOOK_SECRET,
+  });
+
+  return await webhooks.verify(JSON.stringify(payload), signature);
 }

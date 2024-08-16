@@ -16,7 +16,7 @@ function handleLabelCreated(payload: {
   });
 }
 
-function handleLabelEdited(payload: {
+async function handleLabelEdited(payload: {
   changes: {
     name?: { from: string };
     description?: { from: string };
@@ -46,19 +46,21 @@ function handleLabelEdited(payload: {
       data: updating,
       where: { id: label.id },
     });
-  })
+  });
 }
 
-function handleLabelDeleted(payload: {
+async function handleLabelDeleted(payload: {
   label: { name: string };
 }): Promise<Label> {
-  return prisma.issueOnLabel.deleteMany({
-    where: { Label: { name: payload.label.name } },
-  }).then((): Promise<Label> => {
-    return prisma.label.delete({
-      where: { name: payload.label.name },
+  return prisma.issueOnLabel
+    .deleteMany({
+      where: { Label: { name: payload.label.name } },
+    })
+    .then((): Promise<Label> => {
+      return prisma.label.delete({
+        where: { name: payload.label.name },
+      });
     });
-  });
 }
 
 export { handleLabelCreated, handleLabelEdited, handleLabelDeleted };

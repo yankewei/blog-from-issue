@@ -1,26 +1,16 @@
-import { Issue, IssueOnLabel, Label, PrismaClient, Prisma } from "@prisma/client";
+import {
+  Issue,
+  IssueOnLabel,
+  Label,
+  PrismaClient,
+  Prisma,
+} from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 function handleIssueOpen(payload: object): Promise<Issue> {
   const repository_raw = payload["repository"];
   const issue_raw = payload["issue"];
-
-  const IssueOnLabel = [];
-
-  if (issue_raw["labels"].length !== 0) {
-    issue_raw["labels"].map(
-      (label_raw: { name: String; color: String; description: String }) =>
-        IssueOnLabel.push({
-          where: { name: label_raw["name"] },
-          create: {
-            name: label_raw["name"],
-            description: label_raw["description"],
-            color: label_raw["color"],
-          },
-        }),
-    );
-  }
 
   return prisma.issue.create({
     data: {
@@ -34,9 +24,6 @@ function handleIssueOpen(payload: object): Promise<Issue> {
       number: issue_raw["number"],
       title: issue_raw["title"],
       body: issue_raw["body"] ?? "",
-      IssueOnLabel: {
-        connectOrCreate: IssueOnLabel,
-      },
     },
   });
 }
@@ -87,27 +74,31 @@ function handleIssueDeleted(payload: {
   issue: { number: number };
   repository: { full_name: string };
 }): Promise<Issue> {
-  return prisma.repository.findUnique({
-    where: { full_name: payload.repository.full_name },
-  }).then((repository) => {
-    return prisma.issueOnLabel.deleteMany({
-      where: {
-        Issue: {
-          repositoryId: repository.id,
-          number: payload.issue.number,
-        },
-      },
-    }).then((): Promise<Issue> => {
-      return prisma.issue.delete({
-        where: {
-          repositoryId_number: {
-            repositoryId: repository.id,
-            number: payload.issue.number,
+  return prisma.repository
+    .findUnique({
+      where: { full_name: payload.repository.full_name },
+    })
+    .then((repository) => {
+      return prisma.issueOnLabel
+        .deleteMany({
+          where: {
+            Issue: {
+              repositoryId: repository.id,
+              number: payload.issue.number,
+            },
           },
-        },
-      });
+        })
+        .then((): Promise<Issue> => {
+          return prisma.issue.delete({
+            where: {
+              repositoryId_number: {
+                repositoryId: repository.id,
+                number: payload.issue.number,
+              },
+            },
+          });
+        });
     });
-  });
 }
 
 function handleIssueUnlabeled(payload: {
@@ -115,23 +106,25 @@ function handleIssueUnlabeled(payload: {
   label: { name: string };
   repository: { full_name: string };
 }): Promise<Prisma.BatchPayload> {
-  return prisma.repository.findUnique({
-    where: { full_name: payload.repository.full_name },
-  }).then((repository): Promise<Prisma.BatchPayload>  => {
-    return prisma.issueOnLabel.deleteMany({
-      where: {
-        Issue: {
-          repositoryId: repository.id,
-          number: payload.issue.number,
-        },
-        AND: {
-          Label: {
-            name: payload.label.name,
+  return prisma.repository
+    .findUnique({
+      where: { full_name: payload.repository.full_name },
+    })
+    .then((repository): Promise<Prisma.BatchPayload> => {
+      return prisma.issueOnLabel.deleteMany({
+        where: {
+          Issue: {
+            repositoryId: repository.id,
+            number: payload.issue.number,
+          },
+          AND: {
+            Label: {
+              name: payload.label.name,
+            },
           },
         },
-      },
+      });
     });
-  });
 }
 
 function handleIssueEdited(payload: {
@@ -139,7 +132,7 @@ function handleIssueEdited(payload: {
     title?: { from: string };
     body?: { from: string };
   };
-  issue: { number: number, title: string, body: string };
+  issue: { number: number; title: string; body: string };
   repository: { full_name: string };
 }): Promise<Issue> {
   const updating_data = {};
@@ -148,21 +141,29 @@ function handleIssueEdited(payload: {
     updating_data[key] = value.from;
   }
 
-  return prisma.issue.findFirst({
-    where: {
-      repository:{
-        full_name: payload.repository.full_name,
+  return prisma.issue
+    .findFirst({
+      where: {
+        repository: {
+          full_name: payload.repository.full_name,
+        },
+        AND: {
+          number: payload.issue.number,
+        },
       },
-      AND: {
-        number: payload.issue.number,
-      }
-    },
-  }).then((issue): Promise<Issue> => {
-    return prisma.issue.update({
-      where: { id: issue.id },
-      data: updating_data,
+    })
+    .then((issue): Promise<Issue> => {
+      return prisma.issue.update({
+        where: { id: issue.id },
+        data: updating_data,
+      });
     });
-  });
 }
 
-export { handleIssueOpen, handleIssueLabeled, handleIssueDeleted, handleIssueUnlabeled, handleIssueEdited };
+export {
+  handleIssueOpen,
+  handleIssueLabeled,
+  handleIssueDeleted,
+  handleIssueUnlabeled,
+  handleIssueEdited,
+};

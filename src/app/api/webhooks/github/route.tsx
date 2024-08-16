@@ -4,6 +4,7 @@ import {
   handleIssueLabeled,
   handleIssueDeleted,
   handleIssueUnlabeled,
+  handleIssueEdited,
 } from "./issues/handleIssueEvent";
 import { Webhooks } from "@octokit/webhooks";
 import {
@@ -51,7 +52,7 @@ export async function POST(request: NextRequest) {
             await handleIssueUnlabeled(payload);
             break;
           case "edited":
-            await handleLabelEdited(payload);
+            await handleIssueEdited(payload);
           default:
             throw new Error(`Unsupport issue event ${event_action}`);
         }

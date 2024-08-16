@@ -53,6 +53,7 @@ export async function POST(request: NextRequest) {
             break;
           case "edited":
             await handleIssueEdited(payload);
+            break;
           default:
             throw new Error(`Unsupport issue event ${event_action}`);
         }

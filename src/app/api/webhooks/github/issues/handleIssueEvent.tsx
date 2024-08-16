@@ -138,7 +138,7 @@ async function handleIssueEdited(payload: {
   const updating_data = {};
 
   for (const [key, value] of Object.entries(payload.changes)) {
-    updating_data[key] = value.from;
+    updating_data[key] = payload.issue[key as keyof typeof payload.issue];
   }
 
   return prisma.issue

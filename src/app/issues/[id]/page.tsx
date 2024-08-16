@@ -30,6 +30,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="w-9/12 px-1 py-2 rounded-small border-default-200 dark:border-default-100">
+        <div className="subpixel-antialiased text-3xl mb-8">{issue.title}</div>
         <div className="flex flex-row justify-start mb-2 mix-blend-difference">
           {labels}
         </div>

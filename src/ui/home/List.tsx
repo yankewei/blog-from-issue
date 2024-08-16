@@ -37,7 +37,7 @@ export default function List({ issues }: { issues: Array<Issue> }) {
   });
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center mt-10">
       <ListboxWrapper>
         <Listbox aria-label="Listbox Variants" color="primary" variant="light">
           {items}

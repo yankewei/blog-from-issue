@@ -20,17 +20,15 @@ export default async function Page({ params }: { params: { id: string } }) {
       <div className="w-full max-w-5xl px-4 sm:px-6 lg:px-8">
         <div className="bg-white shadow-xl rounded-lg overflow-hidden border border-gray-100">
           <div className="p-6 sm:p-8 md:p-10">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4 leading-tight">{issue.title}</h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-4 leading-tight">
+              {issue.title}
+            </h1>
             <div className="flex flex-wrap gap-2 mb-6">
               {issue.IssueOnLabel.map((issueOnLabel, index) => (
                 <span
                   key={index}
-                  className="px-3 py-1 text-sm font-medium rounded-full shadow-sm"
-                  style={{
-                    backgroundColor: `${issueOnLabel.Label.color}22`,
-                    color: issueOnLabel.Label.color,
-                    border: `1px solid ${issueOnLabel.Label.color}`
-                  }}
+                  className="px-3 py-1 text-sm font-medium rounded-full mix-blend-difference shadow-2xl"
+                  style={{ backgroundColor: `#${issueOnLabel.Label.color}` }}
                 >
                   {issueOnLabel.Label.name}
                 </span>

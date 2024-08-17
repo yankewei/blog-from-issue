@@ -12,7 +12,7 @@ export async function generateMetadata({ params, searchParams }) {
 
 export default async function Page({ params }: { params: { id: string } }) {
   const issue = await getIssue(parseInt(params.id));
-  const md = new MarkdownIt("commonmark");
+  const md = new MarkdownIt();
   const result = md.render(issue.body);
 
   const labels = issue.IssueOnLabel.map(function (IssueOnLabel, index) {
@@ -29,16 +29,18 @@ export default async function Page({ params }: { params: { id: string } }) {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <div className="w-9/12 px-1 py-2 rounded-small border-default-200 dark:border-default-100">
+      <div className="px-1 py-2 rounded-small border-default-200 dark:border-default-100 w-3/6">
         <div className="subpixel-antialiased text-3xl mb-8">{issue.title}</div>
         <div className="flex flex-row justify-start mb-2 mix-blend-difference">
           {labels}
         </div>
         <Divider />
-        <article
-          className="prose prose-slate"
-          dangerouslySetInnerHTML={{ __html: result }}
-        ></article>
+        <div className="flex justify-center">
+          <article
+            className="prose prose-slate max-w-none"
+            dangerouslySetInnerHTML={{ __html: result }}
+          ></article>
+        </div>
       </div>
     </div>
   );

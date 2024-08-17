@@ -15,31 +15,33 @@ export default async function Page({ params }: { params: { id: string } }) {
   const md = new MarkdownIt();
   const result = md.render(issue.body);
 
-  const labels = issue.IssueOnLabel.map(function (IssueOnLabel, index) {
-    return (
-      <span
-        key={index}
-        className="border-1 rounded px-2 mr-1"
-        style={{ backgroundColor: `#${IssueOnLabel.Label.color}` }}
-      >
-        {IssueOnLabel.Label.name}
-      </span>
-    );
-  });
-
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="px-1 py-2 rounded-small border-default-200 dark:border-default-100 w-3/6">
-        <div className="subpixel-antialiased text-3xl mb-8">{issue.title}</div>
-        <div className="flex flex-row justify-start mb-2 mix-blend-difference">
-          {labels}
-        </div>
-        <Divider />
-        <div className="flex justify-center">
-          <article
-            className="prose prose-slate max-w-none"
-            dangerouslySetInnerHTML={{ __html: result }}
-          ></article>
+    <div className="flex flex-col items-center bg-gradient-to-b from-blue-50 to-white min-h-screen py-10">
+      <div className="w-full max-w-5xl px-4 sm:px-6 lg:px-8">
+        <div className="bg-white shadow-xl rounded-lg overflow-hidden border border-gray-100">
+          <div className="p-6 sm:p-8 md:p-10">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4 leading-tight">{issue.title}</h1>
+            <div className="flex flex-wrap gap-2 mb-6">
+              {issue.IssueOnLabel.map((issueOnLabel, index) => (
+                <span
+                  key={index}
+                  className="px-3 py-1 text-sm font-medium rounded-full shadow-sm"
+                  style={{
+                    backgroundColor: `${issueOnLabel.Label.color}22`,
+                    color: issueOnLabel.Label.color,
+                    border: `1px solid ${issueOnLabel.Label.color}`
+                  }}
+                >
+                  {issueOnLabel.Label.name}
+                </span>
+              ))}
+            </div>
+            <Divider className="my-6 opacity-50" />
+            <article
+              className="prose prose-base prose-blue max-w-none mt-6"
+              dangerouslySetInnerHTML={{ __html: result }}
+            ></article>
+          </div>
         </div>
       </div>
     </div>

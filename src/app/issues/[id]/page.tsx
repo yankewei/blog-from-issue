@@ -1,6 +1,7 @@
 import { Issue, Label, Prisma, PrismaClient } from "@prisma/client";
 import MarkdownIt from "markdown-it";
 import { Divider } from "@nextui-org/divider";
+import {Link} from "@nextui-org/link";
 
 export async function generateMetadata({ params, searchParams }) {
   const issue = await getIssue(parseInt(params.id));
@@ -14,6 +15,9 @@ export default async function Page({ params }: { params: { id: string } }) {
   const issue = await getIssue(parseInt(params.id));
   const md = new MarkdownIt();
   const result = md.render(issue.body);
+
+
+  console.log(issue)
 
   return (
     <div className="flex flex-col items-center bg-gradient-to-b from-blue-50 to-white min-h-screen py-10">
@@ -39,6 +43,11 @@ export default async function Page({ params }: { params: { id: string } }) {
               className="prose prose-base prose-blue max-w-none mt-6"
               dangerouslySetInnerHTML={{ __html: result }}
             ></article>
+            <Divider className="my-6 opacity-50" />
+            <div>
+              <p style={{ display: 'inline' }}>来源：</p>
+              <Link href={`https://github.com/${issue.repository.full_name}/issues/${issue.id}`} style={{ display: 'inline' }}>https://github.com/{issue.repository.full_name}/issues/{issue.id}</Link>
+            </div>
           </div>
         </div>
       </div>
@@ -51,6 +60,9 @@ function getIssue(id: number): Promise<
     IssueOnLabel: (Prisma.IssueOnLabelInclude & {
       Label: Label;
     })[];
+    repository: { // Corrected from 'respository' to 'repository'
+      full_name: string;
+    }
   }
 > {
   return new PrismaClient().issue.findUnique({
@@ -60,6 +72,9 @@ function getIssue(id: number): Promise<
           Label: true,
         },
       },
+      repository: { // Ensure this matches the corrected type
+        select: { full_name: true }
+      }
     },
     where: {
       id: id,

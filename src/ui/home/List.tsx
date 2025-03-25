@@ -18,9 +18,9 @@ export default function List({ issues }: { issues: Array<Issue> }) {
         className={`py-3 ${index !== issues.length - 1 ? "border-b border-gray-100 dark:border-gray-800" : ""}`}
       >
         <Link href={href} className="flex flex-row items-center justify-between w-full">
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 max-w-[75%]">
             <span
-              className={`text-lg font-medium transition-colors duration-200 ${
+              className={`text-lg font-medium transition-colors duration-200 truncate ${
                 issue_id === issue.id ? "text-primary" : "text-gray-800 dark:text-gray-200"
               }`}
             >
@@ -31,7 +31,7 @@ export default function List({ issues }: { issues: Array<Issue> }) {
               {issue.body && issue.body.length > 120 ? "..." : ""}
             </p>
           </div>
-          <div className="flex flex-col items-end gap-2">
+          <div className="flex flex-col items-end gap-2 min-w-[120px] ml-4">
             <Chip 
               size="sm" 
               variant="flat" 

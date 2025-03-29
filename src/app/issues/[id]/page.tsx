@@ -84,7 +84,7 @@ export default async function Page({ params }: { params: { id: string } }) {
               </div>
               
               {/* 分享按钮 */}
-              <ShareButton />
+              <ShareButton className="flex justify-between items-center" />
             </div>
           </div>
         </div>

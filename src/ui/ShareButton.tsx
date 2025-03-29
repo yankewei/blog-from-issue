@@ -3,7 +3,12 @@
 import { Button } from "@nextui-org/button";
 import { useState } from "react";
 
-export function ShareButton() {
+interface ShareButtonProps {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+export function ShareButton({ className = "" }: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const handleShare = () => {
@@ -16,7 +21,7 @@ export function ShareButton() {
     <Button
       size="sm"
       variant="light"
-      className="text-gray-600 dark:text-gray-400"
+      className={`text-gray-600 dark:text-gray-400 ${className}`}
       onClick={handleShare}
     >
       <i className={`icon-[tabler--${copied ? 'check' : 'share'}] mr-1`}></i>

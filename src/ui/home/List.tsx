@@ -4,8 +4,18 @@ import { Listbox, ListboxItem, Link, Chip, Divider } from "@nextui-org/react";
 import { ListboxWrapper } from "@/ui/home/ListboxWrapper";
 import { Issue } from "@prisma/client";
 import { useState } from "react";
+import { Pagination } from "@nextui-org/pagination";
+import NextLink from "next/link";
 
-export default function List({ issues }: { issues: Array<Issue> }) {
+export default function List({ 
+  issues, 
+  currentPage = 1, 
+  totalPages = 1 
+}: { 
+  issues: Array<Issue>;
+  currentPage?: number;
+  totalPages?: number;
+}) {
   const [issue_id, setIssueId] = useState(0);
 
   const items = issues.map(function (issue, index): React.ReactElement {
@@ -15,35 +25,31 @@ export default function List({ issues }: { issues: Array<Issue> }) {
         key={issue.id}
         onMouseEnter={() => setIssueId(issue.id)}
         onMouseLeave={() => setIssueId(0)}
-        className={`py-4 ${index !== issues.length - 1 ? "border-b border-gray-100 dark:border-gray-800" : ""}`}
+        className={`py-3 ${index !== issues.length - 1 ? "border-b border-gray-100 dark:border-gray-800" : ""} font-mono`}
       >
         <Link href={href} className="flex flex-row items-center justify-between w-full group">
-          <div className="flex flex-col gap-2 max-w-[75%]">
+          <div className="flex-1 truncate">
             <span
-              className={`text-lg font-medium transition-colors duration-300 truncate group-hover:text-primary ${
-                issue_id === issue.id ? "text-primary" : "text-gray-800 dark:text-gray-200"
+              className={`text-base transition-colors duration-300 truncate group-hover:text-primary ${
+                issue_id === issue.id ? "text-primary" : "text-gray-700 dark:text-gray-300"
               }`}
             >
               <i className="icon-[tabler--article] mr-2 inline-block align-text-bottom text-primary opacity-80"></i>
               {issue.title}
             </span>
-            <p className="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 leading-relaxed">
-              {issue.body?.substring(0, 120)}
-              {issue.body && issue.body.length > 120 ? "..." : ""}
-            </p>
           </div>
-          <div className="flex flex-col items-end gap-2 min-w-[120px] ml-4">
+          <div className="ml-4 flex-shrink-0">
             <Chip 
               size="sm" 
               variant="flat" 
               color="primary"
-              className="transition-all duration-300 group-hover:scale-105 group-hover:bg-primary/20"
-              startContent={<i className="icon-[tabler--calendar] text-xs opacity-70"></i>}
+              className="transition-all duration-300 group-hover:bg-primary/20 w-[110px] justify-center"
+              startContent={<i className="icon-[tabler--calendar] text-xs opacity-70 ml-0"></i>}
             >
               {issue.created_at.toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "short",
-                day: "numeric",
+                day: "2-digit",
               })}
             </Chip>
           </div>
@@ -53,18 +59,12 @@ export default function List({ issues }: { issues: Array<Issue> }) {
   });
 
   return (
-    <div className="flex flex-col items-center mt-10">
-      <div className="not-prose text-center mb-8">
-        <h2 className="text-3xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+    <div className="flex flex-col items-center mt-6 px-4 sm:px-6 lg:px-0">
+      <div className="w-full max-w-3xl mx-auto">
+        <h2 className="text-xl font-medium mb-4 text-gray-800 dark:text-gray-200">
           文章列表
         </h2>
-        <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
-          探索精选内容，获取最新见解与深度分析
-        </p>
-        <div className="w-20 h-1 bg-gradient-to-r from-primary/60 to-secondary/60 mx-auto mt-4 rounded-full"></div>
-      </div>
-      
-      <div className="w-full max-w-3xl mx-auto">
+        
         <ListboxWrapper className="shadow-sm dark:shadow-zinc-800/10 rounded-xl border border-gray-200 dark:border-gray-800 transition-all duration-300 hover:shadow-md">
           <Listbox 
             aria-label="文章列表" 
@@ -82,12 +82,49 @@ export default function List({ issues }: { issues: Array<Issue> }) {
         </ListboxWrapper>
       </div>
       
-      {items.length > 0 && (
-        <div className="mt-6 text-sm text-gray-400 dark:text-gray-500 flex items-center">
-          <i className="icon-[tabler--info-circle] mr-1.5"></i>
-          共 {items.length} 篇文章
-        </div>
-      )}
+      <div className="mt-6 flex flex-col items-center gap-4">
+        {totalPages > 1 && (
+          <div className="mt-2 mb-8">
+            <Pagination
+              total={totalPages}
+              page={currentPage}
+              initialPage={currentPage}
+              classNames={{
+                wrapper: "gap-1",
+                item: "w-8 h-8 text-sm",
+              }}
+              renderItem={({ ref, key, value, isActive }) => {
+                const pageNumber = value;
+                
+                // 手动判断当前页码是否为活动状态
+                const isCurrentActive = pageNumber === currentPage;
+                
+                if (value === "dots") {
+                  return (
+                    <div key={key} className="w-8 h-8 flex items-center justify-center text-gray-500">
+                      ...
+                    </div>
+                  );
+                }
+                
+                return (
+                  <NextLink
+                    key={key}
+                    href={`/?page=${pageNumber}`}
+                    className={`w-8 h-8 rounded-md flex items-center justify-center ${
+                      isCurrentActive 
+                        ? "bg-primary text-white font-medium" 
+                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    }`}
+                  >
+                    {pageNumber}
+                  </NextLink>
+                );
+              }}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,0 +1,9 @@
+/* 在文件的适当位置添加以下代码 */
+body {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* 确保所有文本元素都使用等宽字体 */
+h1, h2, h3, h4, h5, h6, p, span, a, div, button, input, textarea {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+}

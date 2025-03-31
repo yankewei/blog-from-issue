@@ -73,7 +73,7 @@ export default async function Page({ params }: { params: { id: string } }) {
               <div className="text-gray-600 dark:text-gray-400 text-sm flex items-center">
                 <span>来源：</span>
                 <Link 
-                  href={`https://github.com/${issue.repository.full_name}/issues/${issue.id}`} 
+                  href={`https://github.com/${issue.repository.full_name}/issues/${issue.number}`} 
                   className="inline-flex items-center ml-1"
                   target="_blank"
                   rel="noopener noreferrer"

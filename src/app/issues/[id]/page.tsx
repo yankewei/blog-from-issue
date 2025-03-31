@@ -79,7 +79,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                   rel="noopener noreferrer"
                 >
                   <i className="icon-[tabler--brand-github] mr-1"></i>
-                  github.com/{issue.repository.full_name}/issues/{issue.id}
+                  github.com/{issue.repository.full_name}/issues/{issue.number}
                 </Link>
               </div>
               
